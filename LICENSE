@@ -2,20 +2,24 @@ MIT License
 
 Copyright (c) 2026 Przemysław Ćwik
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The original code and documentation in this repository are released under
+the MIT License. This applies only to files authored for this project and
+does not apply to third-party software, model files, checkpoints, or data.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This project uses the `idiap/coqui-ai-TTS` library as an external dependency.
+That library is licensed under the Mozilla Public License 2.0 (MPL-2.0):
+https://github.com/idiap/coqui-ai-TTS/blob/main/LICENSE.txt
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+The Coqui XTTS-v2 base model, its weights, files distributed with the model,
+and fine-tuned checkpoints derived from it are subject to the Coqui Public
+Model License 1.0.0 (CPML):
+https://huggingface.co/coqui/XTTS-v2/blob/main/LICENSE.txt
+
+Model weights, fine-tuned checkpoints, and the training dataset are not
+included in this repository. Use of the XTTS-v2 model and outputs generated
+with it is subject to the terms of the CPML, including its non-commercial
+use restriction.
+
+If this repository contains any modified or copied source files from
+`idiap/coqui-ai-TTS`, those files remain subject to the MPL-2.0 and retain
+their original copyright and license notices.
