@@ -1,0 +1,32 @@
+# Srodowiska wirtualne
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Dane treningowe i wagi modeli
+audio/
+dataset/
+data/
+*.wav
+*.pth
+*.pt
+
+# Wyniki treningu i logi
+voice_cloning_output/
+voice_cloning_models/
+voice_cloning_backup/
+runs/
+events.out.tfevents.*
+*.log
+
+# System
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
