@@ -1,6 +1,6 @@
 # Klonowanie głosu w języku polskim (XTTS v2)
 
-Fine-tuning modelu [XTTS v2](https://huggingface.co/coqui/XTTS-v2) na własnym zbiorze nagrań, przeprowadzony na wynajmowanym GPU w serwisie RunPod. Projekt poboczny, zrobiony po godzinach. Repozytorium zawiera cały kod oraz konfigurację z faktycznego przebiegu treningu: przygotowanie i walidację danych, dostrajanie modelu, a na końcu generowanie mowy gotowym modelem.
+Fine-tuning modelu [XTTS v2](https://huggingface.co/coqui/XTTS-v2) na własnym zbiorze nagrań, przeprowadzony na wynajmowanym GPU w serwisie RunPod. Repozytorium zawiera cały kod oraz konfigurację z faktycznego przebiegu treningu: przygotowanie i walidację danych, dostrajanie modelu, a na końcu generowanie mowy gotowym modelem.
 
 Projekt korzysta z aktywnie utrzymywanego forka [idiap/coqui-ai-TTS](https://github.com/idiap/coqui-ai-TTS), ponieważ oryginalne repozytorium Coqui nie jest już rozwijane.
 
@@ -18,7 +18,7 @@ Sprawdzenie, na ile model XTTS v2 daje się dostroić do pojedynczego głosu w j
 3. scalenie zrodel        tools/merge_datasets.py
 4. filtr dlugosci         tools/filter_by_duration.py
 5. raport i walidacja     tools/dataset_stats.py, tools/validate_metadata.py
-6. fine-tuning            train_runpod.py, 70 epok na GPU A40
+6. fine-tuning            train_runpod.py, 70 epok (do własnej oceny, uważać na overfitting) na GPU A40
 7. wybor checkpointu      odsluch kilku ostatnich zapisow, nie tylko best_model
 8. generowanie            generate.py, dobor parametrow i probki referencyjnej
 ```
@@ -153,7 +153,7 @@ python tools/validate_metadata.py audio/metadata.csv
 | --- | --- |
 | Liczba nagrań | 1173 |
 | Łączny czas | 69,5 min (1,16 h) |
-| Długość nagrania, zakres | od 2,004 s do 10,000 s |
+| Długość nagrania, zakres | od 2,004 s do 12,000 s |
 | Długość nagrania, średnia | 3,56 s |
 | Długość nagrania, mediana | 3,13 s |
 | Format | WAV, 22050 Hz, mono, 16 bit |
@@ -171,8 +171,6 @@ Rozkład długości nagrań:
 | 10 do 12 s | 12 | 1,0 % |
 
 Przyjęty przedział to od 2 do 12 s, a fragmenty poza nim były odrzucane bez prób łączenia czy dzielenia. Taki zakres zalecają poradniki do XTTS v2 i pokrywa się on z ograniczeniem wynikającym z konfiguracji: `max_wav_length` ustawione jest na 264600 próbek, czyli 12 s przy 22050 Hz, a dłuższe pliki trainer odrzuca. Ograniczenie dolne wiąże się z `min_conditioning_length` równym 66150 próbek, czyli 3 s, poniżej którego nagranie nie nadaje się na próbkę warunkującą barwę głosu.
-
-Faktyczny zakres w gotowym zbiorze jest węższy i wynosi od 2,004 s do 10,000 s. Dwanaście nagrań ma równo 10,000 s, a kolejne w kolejności nie przekracza 9,5 s. Skupienie na okrągłej wartości nie powstaje przy odrzucaniu, gdzie długości są przypadkowe, więc na etapie cięcia zadziałał dodatkowy limit czasu ustawiony na 10 s. Te dwanaście nagrań jest prawdopodobnie uciętych w trakcie wypowiedzi i ich transkrypcja opisuje więcej, niż słychać w pliku.
 
 Transkrypcje mieszczą się w limicie `max_text_length` wynoszącym 200 znaków, najdłuższa ma 164 znaki.
 
@@ -213,7 +211,7 @@ tensorboard --logdir /workspace/voice_cloning_output --bind_all --port 6006
 Tunel SSH z komputera lokalnego, z danymi połączenia z zakładki Connect w panelu RunPod, opcja SSH over exposed TCP:
 
 ```bash
-ssh -L 6006:127.0.0.1:6006 root@<host> -p <port> -i ~/.ssh/id_ed25519
+ssh -L 6006:127.0.0.1:6006 root@<host> -p <port> -i ~/.ssh/id_edxxxxx
 ```
 
 Panel dostępny jest pod adresem `http://127.0.0.1:6006`.
@@ -267,7 +265,8 @@ Nazwa pliku wyjściowego składa się z użytych parametrów, na przykład `temp
 * Przetestowano dwa zestawy parametrów: `temperature 0.6`, `top_k 35`, `repetition_penalty 4.0` oraz `temperature 0.7`, `top_k 20`, `repetition_penalty 2.0`. Drugi brzmi naturalniej, pierwszy stabilniej przy dłuższych zdaniach. Wartości domyślne w `generate.py` odpowiadają drugiemu zestawowi.
 * Wysoki `repetition_penalty` skutecznie usuwa zacinanie się modelu, ale zawyżony spłaszcza intonację.
 * Loader XTTS wymaga, aby plik z wagami nazywał się dokładnie `model.pth`. Checkpoint zapisany przez trainer pod nazwą `checkpoint_3541.pth` trzeba przemianować, inaczej biblioteka go nie znajdzie.
-
+* Jako że model ma nie całe 6 GB, to generowanie można uruchomić na karcie graficznej posiadającej > 6 GB VRAM-u. Testowane na NVIDIA GeForce RTX 3060 TGP 130W (wersja laptopowa) 
+  
 ## Licencja
 
 Kod w tym repozytorium udostępniony jest na licencji MIT.
